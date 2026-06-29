@@ -1,98 +1,86 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 AI-Powered URL Shortener
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A highly scalable, production-ready URL shortener backend built with modern web technologies. This project features JWT authentication, Redis caching, asynchronous background jobs using BullMQ, and integrates with Google's Gemini AI to automatically analyze and categorize shortened URLs.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🛠️ Tech Stack
 
-## Description
+* **Framework:** NestJS (Fastify)
+* **Language:** TypeScript
+* **Database:** PostgreSQL (TypeORM)
+* **Caching:** Redis (Key-Value & Throttler)
+* **Message Queue:** BullMQ
+* **AI Integration:** Google Gemini API
+* **Observability:** OpenTelemetry & Jaeger
+* **Containerization:** Docker & Docker Compose
+* **CI/CD:** GitHub Actions
+* **Testing:** Jest & Supertest (Unit & E2E)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Features
 
-## Project setup
+* **JWT Authentication:** Secure user registration, login, and token refresh flow.
+* **URL Shortening:** Generates unique, collision-resistant 6-character short codes.
+* **AI Categorization:** Asynchronously fetches metadata from original URLs and uses Gemini AI to generate a summary and categorize the link.
+* **High Performance:** Uses Fastify under the hood, heavily caches URL resolutions in Redis to minimize database hits.
+* **Rate Limiting:** Protects endpoints from abuse using Redis-backed throttling.
+* **Click Tracking:** Records analytics (IP, User-Agent, Referer) for every URL click via background jobs.
+* **Distributed Tracing:** Fully instrumented with OpenTelemetry to trace requests across the API, Postgres, and Redis inside Jaeger.
+* **Interactive Docs:** Auto-generated Swagger/OpenAPI documentation.
 
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have [Docker](https://www.docker.com/) and [Node.js 22](https://nodejs.org/) (with `pnpm` enabled) installed on your machine.
+
+### 1. Environment Setup
+Clone the repository and create your environment file:
 ```bash
-$ pnpm install
+cp .env.example .env
+```
+*Make sure to fill in your `GEMINI_API_KEY` in the `.env` file.*
+
+### 2. Run the Infrastructure (Docker)
+Start the PostgreSQL database, Redis cache, and Jaeger tracing server:
+```bash
+docker compose up -d postgres redis jaeger
 ```
 
-## Compile and run the project
-
+### 3. Run the Application
+Install dependencies and start the NestJS server:
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
+pnpm run start:dev
 ```
 
-## Run tests
-
+*Alternatively, you can run the entire stack (API included) in Docker:*
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+docker compose up --build -d
 ```
 
-## Deployment
+## 📖 API Documentation
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Once the server is running, you can explore and test the API using the interactive Swagger UI.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+* **Swagger UI:** [http://localhost:3000/api](http://localhost:3000/api)
+
+### Key Endpoints
+* `POST /auth/register` - Create an account
+* `POST /auth/login` - Authenticate and receive JWT
+* `POST /urls` - Shorten a new URL (Requires Auth)
+* `GET /r/:shortCode` - Redirect to the original URL
+
+## 🧪 Testing
+
+The project includes a comprehensive suite of Unit and E2E API tests. A dedicated test database is spun up automatically in CI/CD.
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+# Run unit tests
+pnpm run test
+
+# Run E2E Integration tests
+pnpm run test:e2e
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 📈 Observability
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Traces are automatically collected and sent to Jaeger. To view performance traces and database queries, open the Jaeger UI:
+* **Jaeger Dashboard:** [http://localhost:16686](http://localhost:16686)
