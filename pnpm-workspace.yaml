@@ -1,0 +1,6 @@
+allowBuilds:
+  '@scarf/scarf': false
+  bcrypt: true
+  msgpackr-extract: true
+  protobufjs: false
+  unrs-resolver: true
